@@ -76,20 +76,22 @@ export default function PostEdit() {
   //function "updatePost"
   const updatePost = async (e) => {
     e.preventDefault();
-    await Api.put(
-      `/api/v1/post/${id}`,
-      {
-        title,
-        content,
-        image,
-        category_id,
+
+    //define formData
+    const formData = new FormData();
+
+    //append data to "formData"
+    formData.append("image", image);
+    formData.append("title", title);
+    formData.append("category_id", category_id);
+    formData.append("content", content);
+
+    await Api.put(`/api/v1/post/${id}`, formData, {
+      headers: {
+        Authorization: `Bearer ${token}`,
+        "content-type": "multipart/form-data",
       },
-      {
-        headers: {
-          Authorization: `Bearer ${token}`,
-        },
-      }
-    )
+    })
       .then((response) => {
         toast.success("Post updated successfully!", {
           position: "top-right",
@@ -128,7 +130,24 @@ export default function PostEdit() {
                 <hr />
                 <form onSubmit={updatePost}>
                   <div className="row">
-                    <div className="col-md-6">
+                    <div className="col-md-12">
+                      <div className="mb-3">
+                        <label className="form-label fw-bold">Image</label>
+                        <input
+                          type="file"
+                          className="form-control"
+                          accept="image/*"
+                          onChange={(e) => setImage(e.target.files[0])}
+                        />
+                      </div>
+                      {errors.image && (
+                        <div className="alert alert-danger">
+                          {errors.image[0]}
+                        </div>
+                      )}
+                    </div>
+
+                    <div className="col-md-12">
                       <div className="mb-3">
                         <label className="form-label fw-bold">Title</label>
                         <input
@@ -145,58 +164,45 @@ export default function PostEdit() {
                         </div>
                       )}
                     </div>
-                    <div className="col-md-6">
-                      <div className="mb-3">
-                        <label className="form-label fw-bold">Image Link</label>
-                        <input
-                          type="text"
-                          className="form-control"
-                          value={image}
-                          onChange={(e) => setImage(e.target.value)}
-                          placeholder="Enter Image Link"
-                        />
-                      </div>
-                      {errors.image && (
-                        <div className="alert alert-danger">
-                          {errors.image[0]}
-                        </div>
-                      )}
-                    </div>
-                    <div className="col-md-12">
-                      <div className="mb-3">
-                        <label className="form-label fw-bold">Category</label>
-                        <select
-                          className="form-select"
-                          value={category_id}
-                          onChange={(e) => setCategoryId(e.target.value)}
-                        >
-                          <option value="">-- Select Category --</option>
-                          {categories.map((category) => (
-                            <option value={category.id} key={category.id}>
-                              {category.name}
-                            </option>
-                          ))}
-                        </select>
-                      </div>
-                      {errors.category_id && (
-                        <div className="alert alert-danger">
-                          {errors.category_id[0]}
-                        </div>
-                      )}
-                    </div>
-                    <div className="col-md-12">
-                      <div className="mb-3">
-                        <label className="form-label fw-bold">Content</label>
-                        <Editor content={content} />
-                      </div>
-                      {errors.content && (
-                        <div className="alert alert-danger">
-                          {errors.content[0]}
-                        </div>
-                      )}
-                    </div>
                   </div>
+
+                  <div className="col-md-12">
+                    <div className="mb-3">
+                      <label className="form-label fw-bold">Category</label>
+                      <select
+                        className="form-select"
+                        value={category_id}
+                        onChange={(e) => setCategoryId(e.target.value)}
+                      >
+                        <option value="">-- Select Category --</option>
+                        {categories.map((category) => (
+                          <option value={category.id} key={category.id}>
+                            {category.name}
+                          </option>
+                        ))}
+                      </select>
+                    </div>
+                    {errors.category_id && (
+                      <div className="alert alert-danger">
+                        {errors.category_id[0]}
+                      </div>
+                    )}
+                  </div>
+
+                  <div className="col-md-12">
+                    <div className="mb-3">
+                      <label className="form-label fw-bold">Content</label>
+                      <Editor content={content} />
+                    </div>
+                    {errors.content && (
+                      <div className="alert alert-danger">
+                        {errors.content[0]}
+                      </div>
+                    )}
+                  </div>
+
                   <hr />
+
                   <div>
                     <button
                       type="submit"

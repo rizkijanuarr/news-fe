@@ -59,6 +59,15 @@ export default function PostCreate() {
   const storePost = async (e) => {
     e.preventDefault();
 
+    //define formData
+    const formData = new FormData();
+
+    //append data to "formData"
+    formData.append('image', image);
+    formData.append('title', title);
+    formData.append('category_id', category_id);
+    formData.append('content', content);
+
     //sending data
     await Api.post(
       "/api/v1/post/",
@@ -71,6 +80,7 @@ export default function PostCreate() {
       {
         headers: {
           Authorization: `Bearer ${token}`,
+          'content-type': 'multipart/form-data'
         },
       }
     )
@@ -114,7 +124,24 @@ export default function PostCreate() {
                 <hr />
                 <form onSubmit={storePost}>
                   <div className="row">
-                    <div className="col-md-6">
+                    <div className="col-md-12">
+                      <div className="mb-3">
+                        <label className="form-label fw-bold">Image</label>
+                        <input
+                          type="file"
+                          className="form-control"
+                          accept="image/*"
+                          onChange={(e) => setImage(e.target.files[0])}
+                        />
+                      </div>
+                      {errors.image && (
+                        <div className="alert alert-danger">
+                          {errors.image[0]}
+                        </div>
+                      )}
+                    </div>
+
+                    <div className="col-md-12">
                       <div className="mb-3">
                         <label className="form-label fw-bold">Title</label>
                         <input
@@ -130,24 +157,7 @@ export default function PostCreate() {
                           {errors.title[0]}
                         </div>
                       )}
-                    </div>
-
-                    <div className="col-md-6">
-                      <div className="mb-3">
-                        <label className="form-label fw-bold">Image Link</label>
-                        <input
-                          type="text"
-                          className="form-control"
-                          value={image}
-                          onChange={(e) => setImage(e.target.value)}
-                          placeholder="Enter Image Link"
-                        />
-                      </div>
-                      {errors.image && (
-                        <div className="alert alert-danger">
-                          {errors.image[0]}
-                        </div>
-                      )}
+                      
                     </div>
                   </div>
 
@@ -186,7 +196,7 @@ export default function PostCreate() {
                     )}
                   </div>
 
-                  <hr/>
+                  <hr />
 
                   <div>
                     <button
