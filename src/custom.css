@@ -1,0 +1,8 @@
+.breadcrumb.custom-breadcrumb,
+.breadcrumb.custom-breadcrumb .breadcrumb-item,
+.breadcrumb.custom-breadcrumb .breadcrumb-item a {
+    font-size: 1.35rem !important;
+    font-weight: 600 !important;
+    line-height: 1.2 !important;
+    color: #222 !important;
+}
